@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import Home from "./pages/Home";
+import PlayScenario from "./pages/PlayScenario";
+import ManageScenarios from "./pages/ManageScenarios";
+import NewScenario from "./pages/NewScenario";
+import "./style/App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+
+    const [nrOfScenarios, setNrOfScenarios] = useState();
+    const [loading, setLoading] = useState();
+
+    // useEffect(() => {
+    //     setLoading(true)
+    //     fetch("api/nrOfScenarios").then(response => response.json())
+    //         .then(data => {
+    //             setNrOfScenarios(data);
+    //             setLoading(false);
+    //         })
+    // }, []);
+
+
+
+    if (loading){
+        return <p>Loading ...</p>
+    }
+
+    return(
+        <Router>
+            <Routes>
+                <Route exact path="/" element={<Home/>}/>
+                <Route path ="/loadScenario/" element={<PlayScenario/>}/>
+                <Route exact path="/playScenario" element={<PlayScenario/>}/>
+                <Route exact path="manageScenarios" element={<ManageScenarios/>}/>
+                <Route exaxt path="newScenario" element={<NewScenario />}/>
+            </Routes>
+        </Router>
+    )
 }
 
-export default App;
+export default App

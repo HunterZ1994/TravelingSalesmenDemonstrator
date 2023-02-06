@@ -1,0 +1,32 @@
+.displayArea {
+    background-color: var(--pageBGColor);
+    /*transition: 0.3s;*/
+    max-width: 100vw;
+    height: 94vh;
+    margin: auto;
+    padding: 10px;
+    display: grid;
+    margin-left: 15vw;
+}
+
+.displayArea .playingArea {
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+    border: 1px solid red;
+    border-radius: 10px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    grid-template-areas: "inner-div";
+}
+
+.displayArea .playingArea canvas{
+    /*width: 100%;*/
+    /*height: 100%;*/
+    z-index: 2;
+    position:relative;
+    margin: auto;
+    grid-area: inner-div;
+}
