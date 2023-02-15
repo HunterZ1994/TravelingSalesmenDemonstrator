@@ -100,7 +100,7 @@ const Canvas = ({pointToAdd, coordinates, setCoordinates, background, width, hei
             coordinates.map((point) => {
                 // console.log(point)
                 // drawPoint((point.XPosition / parseInt(width)) * 100, (point.YPosition / parseInt(height)) * 100)
-                drawPoint(point.XPosition, point.YPosition)
+                drawPoint(point.x_coordinate, point.y_coordinate)
             })
         }
     }

@@ -6,6 +6,7 @@ import DisplayArea from "../components/DisplayArea";
 import Canvas from "../components/Canvas";
 import Point from "../components/Points";
 import Modal from "../components/Modal";
+import ModalManager from "../components/ModalManager";
 
 const NewScenario = () => {
 
@@ -13,20 +14,40 @@ const NewScenario = () => {
     const [canvasHeight, setCanvasHeight] = useState(900);
     const [resized, setResized] = useState(false);
 
+    const [modalOpen, setModal] = useState("false");
+
 
     let temp = null;
 
-    const measurePlayingArea =  useCallback(
-                (node) => {
-                    if(node) {
-                        console.log(node)
-                        var style = getComputedStyle(node);
-                        setCanvasWidth(node.getBoundingClientRect().width -  parseFloat(style.paddingLeft.replace("px", "")) - parseFloat(style.paddingRight.replace("px", "") ) -2);
-                        setCanvasHeight( node.getBoundingClientRect().height -  parseFloat(style.paddingTop.replace("px", "")) - parseFloat(style.paddingBottom.replace("px", "") ) -2);
-                        setResized(false);
-                    }
-                },[resized]
+    const measurePlayingArea = useCallback(
+        (node) => {
+            if (node) {
+                console.log(node)
+                var style = getComputedStyle(node);
+                setCanvasWidth(node.getBoundingClientRect().width - parseFloat(style.paddingLeft.replace("px", "")) - parseFloat(style.paddingRight.replace("px", "")) - 2);
+                setCanvasHeight(node.getBoundingClientRect().height - parseFloat(style.paddingTop.replace("px", "")) - parseFloat(style.paddingBottom.replace("px", "")) - 2);
+                setResized(false);
+            }
+        }, [resized]
     )
+
+    const openModal = (e) => {
+        e.preventDefault();
+        console.log("OPEN MODAL")
+        const {
+            target: {
+                id
+            }
+        } = e;
+        console.log(e.target);
+        console.log(id)
+        if (id) setModal(id)
+        console.log("useState", modalOpen);
+    }
+
+    const closeModal = () => {
+        setModal("");
+    }
 
     React.useEffect(() => {
         window.addEventListener('resize', handleResize)
@@ -34,10 +55,10 @@ const NewScenario = () => {
 
     function handleResize() {
         setTimeout(() => {
-            console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
-            setResized(true);
-        }, 300
-    )
+                console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
+                setResized(true);
+            }, 300
+        )
         // manageCanvasSize()
     }
 
@@ -53,8 +74,6 @@ const NewScenario = () => {
     //         [],
     //     );
     // }
-
-
 
 
     // const handleAdd = (X_CoordinateRef, Y_CoordinateRef) => {
@@ -80,7 +99,7 @@ const NewScenario = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         var body = {
-            "name" : name,
+            "name": name,
             "id": id,
             "solution": {
                 "points": coordinates
@@ -88,6 +107,16 @@ const NewScenario = () => {
             "background": preview
         }
         console.log(body);
+        const requestOptions = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(body)
+        };
+        fetch("/api/newScenario", requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data));
     }
 
     const sideBarElements = [
@@ -102,9 +131,19 @@ const NewScenario = () => {
         // },
         // {type: 'submit', href: "/", func: {handleSubmit}, text: "Apply", id: 7},
         // {type: 'link', href: "/", func: null, text: "Back / Cancel", id: 8},
-        {type: "Form", href: "", handleSubmit: () => handleSubmit, coordinates: coordinates, setCoordinates: () => setCoordinates, setName: setName, setBackground: setBackground, text: ""},
-        {type: "modalButton", href: "", func: () => setIsOpen(true), text: "openModal"},
-        {type: "link", href:"/", func: null, text: "Home"}
+        {
+            type: "Form",
+            href: "",
+            handleSubmit: (e) => handleSubmit(e),
+            coordinates: coordinates,
+            setCoordinates: () => setCoordinates,
+            setName: setName,
+            setBackground: setBackground,
+            text: ""
+        },
+        // {type: "modalButton", href: "", func: () => setIsOpen(true), text: "openModal"},
+        {type: "link", href: "", func: (e) => openModal(e), text: "upload background", id: "upload-background-modal"},
+        {type: "link", href: "/", func: null, text: "Home"}
         // {type: "modalButton", href: "", func: null, text: "Open Modal"}
         // {type: "button", href: "", func:"onClick={() => setIsOpen(true)}", text: "open Modal"}
     ]
@@ -126,13 +165,19 @@ const NewScenario = () => {
         filereader.readAsDataURL(file)
     }
 
-    function previewImage(input){
+    function previewImage(input) {
         setFile(input);
         var reader = new FileReader();
         reader.onload = function (e) {
             setPreviw(reader.result);
         }
         reader.readAsDataURL(input);
+    }
+
+    const additionalProps = {
+        preview: preview,
+        previewImage: previewImage,
+        handleFile: handleFile,
     }
 
 
@@ -160,22 +205,29 @@ const NewScenario = () => {
         <div className="new Scenario">
             <Header title={'Create New Scenario'}/>
             <Sidebar items={sideBarElements}/>
-            <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-                Fancy Modal
-                {/*{preview && console.log(preview)}*/}
-                {preview && <div className={"imagePreview"}><img src={preview} alt={"Error"}/> </div>}
-                <form onSubmit={(e) => handleFile(e)}>
-                <input type={"file"} accept={"image/*"} onInput={(e) => {
-                    previewImage(e.target.files[0]);
-                }}/>
-                    {preview && <input type={"submit"} value={"choose file"} disabled={false}/>}
-                    {!preview && <input type={"submit"} value={"choose file"} disabled={true}/>}
-                </form>
-            </Modal>
-            {/*<DisplayArea element={<Canvas pointToAdd={temp} coordinates={coordinates} setCoordinates={setCoordinates} /> }/>*/}
+            {/*<Modal open={isOpen} onClose={() => setIsOpen(false)}>*/}
+            {/*    Fancy Modal*/}
+            {/*    /!*{preview && console.log(preview)}*!/*/}
+            {/*    {preview && <div className={"imagePreview"}><img src={preview} alt={"Error"}/> </div>}*/}
+            {/*    <form onSubmit={(e) => handleFile(e)}>*/}
+            {/*    <input type={"file"} accept={"image/*"} onInput={(e) => {*/}
+            {/*        previewImage(e.target.files[0]);*/}
+            {/*    }}/>*/}
+            {/*        {preview && <input type={"submit"} value={"choose file"} disabled={false}/>}*/}
+            {/*        {!preview && <input type={"submit"} value={"choose file"} disabled={true}/>}*/}
+            {/*    </form>*/}
+            {/*</Modal>*/}
+            {/*<DisplayArea innerRef={measurePlayingArea} element={<Canvas pointToAdd={temp} coordinates={coordinates} setCoordinates={setCoordinates} /> }/>*/}
             {/*<DisplayArea innerRef={measurePlayingArea}/>*/}
-            {!background && <DisplayArea innerRef={measurePlayingArea} element={<Canvas pointToAdd={temp} width={canvasWidth} height={canvasHeight} coordinates={coordinates} setCoordinates={setCoordinates} /> }/>}
-            {background && <DisplayArea innerRef={measurePlayingArea} element={<Canvas pointToAdd={temp}  width={canvasWidth} height={canvasHeight} coordinates={coordinates} setCoordinates={setCoordinates} background={background}/>}/>}
+            {!background && <DisplayArea innerRef={measurePlayingArea}
+                                         element={<Canvas pointToAdd={temp} width={canvasWidth} height={canvasHeight}
+                                                          coordinates={coordinates}
+                                                          setCoordinates={setCoordinates}/>}/>}
+            {background && <DisplayArea innerRef={measurePlayingArea}
+                                        element={<Canvas pointToAdd={temp} width={canvasWidth} height={canvasHeight}
+                                                         coordinates={coordinates} setCoordinates={setCoordinates}
+                                                         background={background}/>}/>}
+            <ModalManager modal={modalOpen} closeFn={closeModal} additionalProps={additionalProps}/>
         </div>
 
 

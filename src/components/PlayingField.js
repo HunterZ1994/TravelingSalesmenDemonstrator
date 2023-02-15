@@ -131,6 +131,10 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
         return points
     }
 
+    function getSolutionEdgesRlative(){
+
+    }
+
     function createPointList(scenario, selectedPoint = null) {
         var points = getScenarioPointsRelative(JSON.parse(JSON.stringify(scenario)).solution.points);
         points.map((point) => {
@@ -140,6 +144,9 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
         // console.log(points);
         if (selectedPoint != null) {
             points[points.findIndex((element) => {
+                console.log("element",JSON.stringify( element));
+                console.log("selectedPoint",JSON.stringify( selectedPoint))
+                // element.x_coordinate === selectedPoint.x_value;
                 return JSON.stringify(element) === JSON.stringify(selectedPoint)
             })].selected = true;
         }

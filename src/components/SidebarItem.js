@@ -5,7 +5,7 @@ import ModalButton from "./ModalButton";
 
 import "../style/SideBarItem.css"
 
-const SidebarItem = ({items, handleSubmit, handleAdd, setOpenModal}) => {
+const SidebarItem = ({items, handleSubmit, handleAdd}) => {
 
     const X_Coordinate = useRef(null);
     const Y_Coordinate = useRef(null);
@@ -25,7 +25,7 @@ const SidebarItem = ({items, handleSubmit, handleAdd, setOpenModal}) => {
         } else {
             switch (item.type) {
                 case 'link':
-                    return <a href={item.href} onClick={item.func}>{item.text}</a>
+                    return <a href={item.href} onClick={item.func} id={item.id}>{item.text}</a>
                 case 'button':
                     return <input type="button" value={item.text} onClick={item.func}
                                   className={"genericButton"}/>

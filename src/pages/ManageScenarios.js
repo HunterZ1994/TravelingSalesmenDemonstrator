@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import DisplayArea from "../components/DisplayArea";
 import Modal from "../components/Modal";
 import DisplayCanvas from "../components/DisplayCanvas";
+import ModalManager from "../components/ModalManager";
 
 const ManageScenarios = () => {
 
@@ -11,12 +12,20 @@ const ManageScenarios = () => {
     const backgroundSelector = useRef(null);
     const backgroundpreview = useRef(null);
     const newNameFiled = useRef(null);
+    const scenarioSelector = useRef(null);
 
+    const [modalOpen, setModal] = useState("false");
 
     const sideBarElements = [
         {type: 'link', href: "/newScenario", func: null, text: "New Scenario", id: 1},
-        {type: 'link', href: "#", func: () => setOpenManageModal(true) && setOpenBackgroundModal(false), text: "Edit Scenario", id: 2},
-        {type: 'link', href: "#", func: null, text: 'Remove Scenario', id: 3},
+        {
+            type: 'link',
+            href: "#",
+            func: (e) => openModal(e),
+            text: "Edit Scenario",
+            id: "edit-scenario-modal"
+        },
+        {type: 'link', href: "#", func: (e) => openModal(e), text: 'Remove Scenario', id: "remove-scenario-modal"},
         {
             type: 'link', href: "#", func: null, text: 'Manage Backgrounds', id: 4, subitems: [
                 {
@@ -26,18 +35,27 @@ const ManageScenarios = () => {
                     text: 'Upload new Image as Background',
                     id: 5
                 },
-                {type: 'link', href: "#", func: () => setOpenBackgroundModal(true) && setOpenManageModal(false), text: 'Edit Background', id: 6},
+                {
+                    type: 'link',
+                    href: "#",
+                    func: (e) => openModal(e),
+                    text: 'Edit Background',
+                    id: "choose-background-modal"
+                },
             ]
         },
         {type: 'link', href: "/", func: null, text: 'Back', id: 7}
     ]
+
+
 
     const [backgroundNames, setBackgroundNames] = useState([]);
     const [selectedBackgroundFileName, setSelectedBackgroundFileName] = useState(null);
     const [openBackgroundModal, setOpenBackgroundModal] = useState(false);
     const [openManageModal, setOpenManageModal] = useState(false);
     const [displayBackgroundImage, setDisplayBackgroundImage] = useState(null);
-
+    const [scenarioNames, setScenarioNames] = useState([]);
+    const [scenarioToRemove, setScenarioToRemove] = useState(null);
 
     useEffect(() => {
         if (selectedBackgroundFileName) {
@@ -53,11 +71,59 @@ const ManageScenarios = () => {
                     var filereader = new FileReader();
                     filereader.onload = () => {
                         backgroundpreview.current.src = filereader.result;
+                        console.log(typeof filereader.result)
                     }
                     filereader.readAsDataURL(imageBlob)
                 })
         }
     }, [openBackgroundModal, selectedBackgroundFileName])
+
+    useEffect(() => {
+        fetch("/api/getAllBackgroundNames").then(response => response.json()).then(
+            names => {
+                setBackgroundNames(names);
+            }
+        )
+        fetch("/api/scenarioNames").then(response => response.json()).then(
+            names => {
+                console.log(names)
+                setScenarioNames(names);
+                console.log(scenarioNames)
+            }
+        )
+    }, [scenarioToRemove]);
+
+    useEffect(
+        () => {
+            if(scenarioToRemove){
+                const requestOptions = {
+                    method: 'DELETE',
+                };
+                fetch("api/deleteScenario?" + new URLSearchParams({
+                    "scenarioID": scenarioToRemove
+                }), requestOptions).then(response => {
+                    response.json()
+                }).then(data => {
+                    console.log(data);
+                })
+            }
+        },
+        [scenarioToRemove])
+
+
+    const openModal = (e) => {
+        e.preventDefault();
+        const {
+            target: {
+                id
+            }
+        } = e;
+        if (id) setModal(id)
+    }
+
+    const closeModal = () => {
+        setModal("");
+    }
 
     const openImageUpload = (e) => {
         e.preventDefault();
@@ -92,6 +158,22 @@ const ManageScenarios = () => {
         console.log(e.target);
     }
 
+    const handleScenarioRemove = (e) => {
+        console.log(e)
+        setScenarioToRemove(scenarioSelector.current.value);
+    }
+
+    const additionalProps = {
+        backgroundpreview: backgroundpreview,
+        newNameFiled: newNameFiled,
+        backgroundSelector: backgroundSelector,
+        handleSelectChange: handleSelectChange,
+        backgroundNames: backgroundNames,
+        handleScenarioRemove: handleScenarioRemove,
+        scenarioSelector: scenarioSelector,
+        scenarioNames: scenarioNames
+    }
+
 
     return (
         <div className="home">
@@ -99,34 +181,40 @@ const ManageScenarios = () => {
             <input type='file' id='file' name={"backgroundFile"} ref={inputFile} style={{display: 'none'}}
                    onInput={(e) => selectBackgroundFile(e)} accept={".png, .jpg, .jpeg, .gif"}/>
             <Sidebar items={sideBarElements}/>
-            <>
-                {openBackgroundModal && <Modal open={openBackgroundModal} onClose={() => setOpenBackgroundModal(false)}>
-                <img style={{
-                    width : "15vw",
-                    height: "15vh",
-                    objectFit: "cover",
-                    objectPosition: "25% 25%"
-                }} ref={backgroundpreview} alt={"backgroundpreview"}/>
-                <> <input type={"button"} id={"rename"} value={"rename"} onClick={(e) => handleBGRename(e)}/>
-                    <input type={"text"} id={"newName"} ref={newNameFiled}/>
-                    <input type={"button"} id={"deleteBackground"} value={"delete"} onClick={(e) => handDeleteBackground(e)}/></>
-                <>{openBackgroundModal && <select id={"backgroundName"} ref={backgroundSelector}
-                                                  onInput={(e) => handleSelectChange(e)}>
-                    {backgroundNames.map(bg => {
-                        return <option value={bg}>{bg}</option>
-                    })}
-                </select>}</>
-            </Modal> }
-                {console.log("openBGModal ", openBackgroundModal)}
-                {console.log("openmanagemodal ",openManageModal)}
-                {openManageModal && <Modal open={openManageModal} onClose={setOpenManageModal(false)}>
-                    <div>Test</div>
-            </Modal>}
-            </>
+            {/*<input type={"button"} id={"openModal"} value={"openBackgroundModalButton"}*/}
+            {/*       data-modal={"upload-background-modal"} onClick={(event) => openModal(event)}/>*/}
+            {/*<>*/}
+            {/*    {openBackgroundModal && <Modal open={openBackgroundModal} onClose={() => setOpenBackgroundModal(false)}>*/}
+            {/*        <img style={{*/}
+            {/*            width: "15vw",*/}
+            {/*            height: "15vh",*/}
+            {/*            objectFit: "cover",*/}
+            {/*            objectPosition: "25% 25%"*/}
+            {/*        }} ref={backgroundpreview} alt={"backgroundpreview"}/>*/}
+            {/*        <> <input type={"button"} id={"rename"} value={"rename"} onClick={(e) => handleBGRename(e)}/>*/}
+            {/*            <input type={"text"} id={"newName"} ref={newNameFiled}/>*/}
+            {/*            <input type={"button"} id={"deleteBackground"} value={"delete"}*/}
+            {/*                   onClick={(e) => handDeleteBackground(e)}/></>*/}
+            {/*        <>{openBackgroundModal && <select id={"backgroundName"} ref={backgroundSelector}*/}
+            {/*                                          onInput={(e) => handleSelectChange(e)}>*/}
+            {/*            {backgroundNames.map(bg => {*/}
+            {/*                return <option value={bg}>{bg}</option>*/}
+            {/*            })}*/}
+            {/*        </select>}</>*/}
+            {/*    </Modal>}*/}
+            {/*    {console.log("openBGModal ", openBackgroundModal)}*/}
+            {/*    {console.log("openmanagemodal ", openManageModal)}*/}
+            {/*    {openManageModal && <Modal open={openManageModal} onClose={setOpenManageModal(false)}>*/}
+            {/*        <div>Test</div>*/}
+            {/*    </Modal>}*/}
+            {/*</>*/}
             <DisplayArea/>
+            <>
+                <ModalManager closeFn={closeModal} modal={modalOpen} additionalProps={additionalProps}/>
+            </>
         </div>
-
-    );
+    )
+        ;
 }
 
 export default ManageScenarios;

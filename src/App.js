@@ -8,24 +8,6 @@ import "./style/App.css";
 
 const App = () => {
 
-    const [nrOfScenarios, setNrOfScenarios] = useState();
-    const [loading, setLoading] = useState();
-
-    // useEffect(() => {
-    //     setLoading(true)
-    //     fetch("api/nrOfScenarios").then(response => response.json())
-    //         .then(data => {
-    //             setNrOfScenarios(data);
-    //             setLoading(false);
-    //         })
-    // }, []);
-
-
-
-    if (loading){
-        return <p>Loading ...</p>
-    }
-
     return(
         <Router>
             <Routes>

@@ -23,8 +23,8 @@ const DisplayCanvas = ({edges, solutionEdges, backgroundImage, width, height, ch
         displayEdges.map((edge) => {
             var JSONEdge = JSON.parse(JSON.stringify(edge));
             c.beginPath();
-            c.moveTo(parseFloat(parseFloat(JSONEdge.start.x_coordinate).toFixed(2)), parseFloat(parseFloat(JSONEdge.start.y_coordinate).toFixed(2)));
-            c.lineTo(parseFloat(parseFloat(JSONEdge.end.x_coordinate).toFixed(2)), parseFloat(parseFloat(JSONEdge.end.y_coordinate).toFixed(2)));
+            c.moveTo(parseFloat(parseFloat(JSONEdge.start.x_coordinate +5).toFixed(2)), parseFloat(parseFloat(JSONEdge.start.y_coordinate +5).toFixed(2)));
+            c.lineTo(parseFloat(parseFloat(JSONEdge.end.x_coordinate +5).toFixed(2)), parseFloat(parseFloat(JSONEdge.end.y_coordinate +5).toFixed(2)));
             c.strokeStyle = "black";
             c.stroke();
         })
@@ -33,8 +33,8 @@ const DisplayCanvas = ({edges, solutionEdges, backgroundImage, width, height, ch
                 const c = context.current;
                 var JSONEdge = JSON.parse(JSON.stringify(edge));
                 c.beginPath();
-                c.moveTo(parseFloat(parseFloat(JSONEdge.start.x_coordinate).toFixed(2)), parseFloat(parseFloat(JSONEdge.start.y_coordinate).toFixed(2)));
-                c.lineTo(parseFloat(parseFloat(JSONEdge.end.x_coordinate).toFixed(2)), parseFloat(parseFloat(JSONEdge.end.y_coordinate).toFixed(2)));
+                c.moveTo(parseFloat(parseFloat(JSONEdge.start.x_coordinate+5).toFixed(2)), parseFloat(parseFloat(JSONEdge.start.y_coordinate+5).toFixed(2)));
+                c.lineTo(parseFloat(parseFloat(JSONEdge.end.x_coordinate+5).toFixed(2)), parseFloat(parseFloat(JSONEdge.end.y_coordinate+5).toFixed(2)));
                 c.strokeStyle = "orange";
                 c.stroke();
             })

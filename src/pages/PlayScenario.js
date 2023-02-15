@@ -60,8 +60,8 @@ const PlayScenario = ({id}) => {
     }
 
     var resourseLink = "/api/Scenario";
-    if (id) {
-        resourseLink = resourseLink + "/" + id;
+    if (scenarioID) {
+        resourseLink = resourseLink + "/" + scenarioID;
     }
 
       useEffect(() => {
@@ -78,17 +78,19 @@ const PlayScenario = ({id}) => {
 
 
     useEffect(() => {
-        fetch(resourseLink).then(
-            res => {
-                console.log(res)
-                return res.json();
-            }).then(data => {
-            setData(data);
-            setIsPendingScenario(false);
-        });
+        if(scenarioID) {
+            fetch(resourseLink).then(
+                res => {
+                    console.log(res)
+                    return res.json();
+                }).then(data => {
+                setData(data);
+                setIsPendingScenario(false);
+            });
+        }
     }, [scenarioID])
 
-    const handleScenarioCoice = (e) => {
+    const handleScenarioChoice = (e) => {
         e.preventDefault();
         setScenarioId(scenarioSelect.current.value)
         setScenarioSelected(true);
@@ -107,7 +109,7 @@ const PlayScenario = ({id}) => {
                 <DisplayArea element={<Modal open={!scenarioSelected} onClose={() => setScenarioSelected(true)}>
                     {isPendingSenarioNames && <div>Loading...</div>}
                     {!isPendingSenarioNames &&
-                        <form onSubmit={(e) => handleScenarioCoice(e)}>
+                        <form onSubmit={(e) => handleScenarioChoice(e)}>
                             <label>Choose a Scenario</label>
                             <select name={"scenario"} id={"scenarioSelector"} ref={scenarioSelect}>
                                 {scenarioNames.map((scenarioName) => {
