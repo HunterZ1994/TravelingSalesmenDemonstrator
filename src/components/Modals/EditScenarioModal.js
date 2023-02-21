@@ -7,10 +7,20 @@ const EditScenarioModal = ({closeFn = () => null, open = false, additionalProps 
             <div className="modal--mask">
                 <div className="modal-window">
                     <header className="modal--header">
-                        <h1>Modal One</h1>
+                        <h1>Rename Scenario</h1>
                     </header>
                     <div className="modal--body">
-                        <p>EditScenarioModal will be displayed here.</p>
+                        <p>Rename your Scenarios</p>
+                        <><select id={"backgroundName"} ref={additionalProps.scenarioSelector} className={"modal-select"}>
+                            {additionalProps.scenarioNames && additionalProps.scenarioNames.map(sc => {
+                                return <option value={sc}>{sc}</option>
+                            })}
+                        </select>
+                            <input type={"text"} id={"newName"} ref={additionalProps.newScenarioNameFiled} className={"modal-input"}/>
+                            </>
+                       <> <input type={"button"} id={"rename"} value={"rename"} className={"modal-button"}
+                                  onClick={(e) => additionalProps.handleScenarioRename(e)}/>
+                        </>
                     </div>
                     <footer className="modal--footer">
                         <button type="button" className="modal--close-button" onClick={closeFn}>

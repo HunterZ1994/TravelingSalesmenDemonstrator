@@ -10,15 +10,15 @@ const ChooseGameModal = ({closeFn = () => null, open = false, additionalProps = 
                     <h1>Select your game</h1>
                 </header>
                 <div className="modal--body">
-                    <form onSubmit={(e) => additionalProps.handleScenarioChoice(e)}>
+                    <form className={"modal-form"} onSubmit={(e) => additionalProps.handleScenarioChoice(e)}>
                         <label>Choose a Scenario</label>
-                        <select name={"scenario"} id={"scenarioSelector"} ref={additionalProps.scenarioSelect}>
+                        <select  className={"modal-select"} name={"scenario"} id={"scenarioSelector"} ref={additionalProps.scenarioSelect}>
                             {additionalProps.scenarioNames && additionalProps.scenarioNames.map((scenarioName) => {
                                     return <option value={scenarioName}>{scenarioName}</option>
                                 }
                             )}
                         </select>
-                        <input type={"submit"} value={"pick!"}/>
+                        <input type={"submit"} value={"pick!"} className={"modal-button"}/>
                     </form>
                 </div>
                 <footer className="modal--footer">

@@ -120,3 +120,9 @@ body {
   color: var(--navBarBG);
   background-color: var(--pageBGColor);
 }
+
+.modal-form{
+  border-radius: 10px;
+  color: var(--textColor);
+  background-color: var(--buttonColor);
+}

@@ -13,6 +13,7 @@ const ManageScenarios = () => {
     const backgroundpreview = useRef(null);
     const newNameFiled = useRef(null);
     const scenarioSelector = useRef(null);
+    const newScenarioNameFiled = useRef(null);
 
     const [modalOpen, setModal] = useState("false");
 
@@ -24,7 +25,7 @@ const ManageScenarios = () => {
                     type: 'link',
                     href: "#",
                     func: (e) => openModal(e),
-                    text: "Edit Scenario",
+                    text: "Rename Scenario",
                     id: "edit-scenario-modal"
                 },
                 {
@@ -172,6 +173,13 @@ const ManageScenarios = () => {
         setScenarioToRemove(scenarioSelector.current.value);
     }
 
+    const handleScenarioRename = (e) => {
+        e.preventDefault();
+        console.log(e)
+        console.log(newScenarioNameFiled.current.value);
+    }
+
+
     const additionalProps = {
         backgroundpreview: backgroundpreview,
         newNameFiled: newNameFiled,
@@ -180,7 +188,9 @@ const ManageScenarios = () => {
         backgroundNames: backgroundNames,
         handleScenarioRemove: handleScenarioRemove,
         scenarioSelector: scenarioSelector,
-        scenarioNames: scenarioNames
+        scenarioNames: scenarioNames,
+        newScenarioNameFiled: newScenarioNameFiled,
+        handleScenarioRename: handleScenarioRename
     }
 
 
