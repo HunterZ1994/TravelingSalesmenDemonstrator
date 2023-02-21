@@ -1,0 +1,292 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 6,
+    "backwardDepth": 6,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "com.example.travelingsalsemendemonstrator.controller.RestController",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_1322970774 { 
+   	label=example
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1453431066 { 
+   	label=travelingsalsemendemonstrator
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   BackgroundController595464079[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)BackgroundController</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   toBackgrounds: Path [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addBackground(toAdd: MultipartFile)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ deleteBackground(filename: String): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >+ getBackground(filename: String): byte[]</TD></TR>
+<TR><TD ALIGN="LEFT" >+ renameBackground(filename: String, newName: String): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Edge133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Edge</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   end: Point [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   start: Point [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Graph133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Graph</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   edges: List&lt;Edge&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   points: List&lt;Point&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   solutionLength: double [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- calculateEdges(points: List&lt;Point&gt;)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Nearest_Neighbour133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Nearest_Neighbour</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   unsolved: Graph [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- calculateDistance(a: Point, b: Point): double</TD></TR>
+<TR><TD ALIGN="LEFT" >- calculateLength(graph: Graph): double</TD></TR>
+<TR><TD ALIGN="LEFT" >- calculateNearestNeighbour(u: Point, points: List&lt;Point&gt;): Edge</TD></TR>
+<TR><TD ALIGN="LEFT" >- printHashMap(toPrint: HashMap&lt;?, ?&gt;)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ solve(): Graph</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Point133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Point</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   x_coordinate: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   y_coordinate: double [1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RestController595464079[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RestController</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   bc: BackgroundController [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   sc: ScenarioController [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ deleteBackground(filename: String): ResponseEntity&lt;?&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ deleteScenario(scenarioName: String): ResponseEntity&lt;?&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ getBackground(backgroundFileName: String): ResponseEntity&lt;?&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ getScenario(id: String): ResponseEntity&lt;Scenario&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ renameBackground(filename: String, newFilename: String): ResponseEntity&lt;?&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ uploadBackground(file: MultipartFile): ResponseEntity&lt;?&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ uploadScenario(data: Scenario): ResponseEntity&lt;?&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Scenario133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Scenario</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   background: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   id: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   name: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   solution: Graph [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- createID(): String</TD></TR>
+<TR><TD ALIGN="LEFT" >- dirIsEmpty(path: Path): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ScenarioController595464079[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ScenarioController</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   reader: ScenarioReader [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   toScenarios: Path [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   writer: ScenarioWriter [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ createScenario(scenario: Scenario): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >+ deleteScenario(id: String): boolean</TD></TR>
+<TR><TD ALIGN="LEFT" >+ getScenario(id: String): Scenario</TD></TR>
+<TR><TD ALIGN="LEFT" >+ renameScenario(id: String, newName: String): Scenario</TD></TR>
+<TR><TD ALIGN="LEFT" >+ updateScenario(scenario: Scenario, id: String): Scenario</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ScenarioReader133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ScenarioReader</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ readFromFile(f: File): Scenario</TD></TR>
+<TR><TD ALIGN="LEFT" >- readFromStream(br: BufferedReader): Scenario</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ScenarioWriter133759692[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ScenarioWriter</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   scenario: Scenario [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ writeToFile(f: File, scenario: Scenario)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ writeToFile(f: File)</TD></TR>
+<TR><TD ALIGN="LEFT" >- writeToStream(stream: BufferedWriter, scenario: Scenario)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+Edge133759692 -> Point133759692[label="end
+[0..1]"];
+Edge133759692 -> Point133759692[label="start
+[0..1]"];
+Graph133759692 -> Edge133759692[label="edges
+[0..*]"];
+Graph133759692 -> Point133759692[label="points
+[0..*]"];
+Nearest_Neighbour133759692 -> Graph133759692[label="unsolved
+[0..1]"];
+RestController595464079 -> BackgroundController595464079[label="bc
+[0..1]"];
+RestController595464079 -> Nearest_Neighbour133759692[label="uploadScenario() -> solve()"];
+RestController595464079 -> ScenarioController595464079[label="sc
+[0..1]"];
+RestController595464079 -> ScenarioWriter133759692[label="uploadScenario() -> writeToFile()"];
+Scenario133759692 -> Graph133759692[label="solution
+[0..1]"];
+ScenarioController595464079 -> ScenarioReader133759692[label="reader
+[0..1]"];
+ScenarioController595464079 -> ScenarioWriter133759692[label="writer
+[0..1]"];
+ScenarioWriter133759692 -> Scenario133759692[label="scenario
+[0..1]"];
+    
+}
+@enduml
