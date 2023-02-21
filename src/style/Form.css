@@ -1,10 +1,14 @@
 form{
-    background: #2C3E50;
-    color: #ECF0F1;
+    background: var(--sideMenuBG);
+    color:var(--textColor);
 
 }
 
+form label{
+    color: var(--textColor);
+}
+
 form input{
-    background: #3498DB;
-    color: #E74C3C;
+    background: var(--sideMenuBG);
+    color: var(--textColor);
 }

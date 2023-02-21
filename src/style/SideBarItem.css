@@ -36,7 +36,8 @@ label {
 }
 
 .genericButton{
-    color: black;
+    color: var(--textColor);
+    background-color: var(--buttonColor);
     border-radius: 10px;
     margin-left: 1vw;
     margin-right: 1vw;

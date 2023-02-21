@@ -1,9 +1,8 @@
-import React, {useRef, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Point from "./Point";
 import DisplayCanvas from "./DisplayCanvas";
-import Modal from "./Modal";
-import {Button, Label} from "reactstrap";
 import "../style/Playingfield.css";
+import ModalManager from "./ModalManager";
 
 const PlayingField = ({scenario, width, height, solution, setSolution, undo, setUndo, playAgain, setPlayAgain}) => {
 
@@ -12,18 +11,22 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
     const [scenarioEdges, setScenarioEdges] = useState([]);
     const [edges, setEdges] = useState([]);
     const [solutionLength, setSolutionLength] = useState();
+    const [backgroundImage, setBackgroundImage] = useState(null);
     const [playerLength, setPlayerLength] = useState();
     const [pointsSelected, setPointsSelected] = useState([]);
     const [alert, setAlert] = useState(false)
+    const [modalOpen, setModal] = useState("false");
     const [testArray, setTestarray] = useState([]);
     const [pathFinished, setPathFinished] = useState(false);
     const [test, setTest] = useState(0);
 
     useEffect(() => {
         var edges = JSON.parse(JSON.stringify(scenario)).solution.edges;
-        setScenarioEdges(edges)
-        var solutionLength = JSON.parse(JSON.stringify(scenario)).solution.solutionLength;
-        setSolutionLength(solutionLength);
+        console.log("Edges from server", JSON.parse(JSON.stringify(scenario)).solution.edges);
+        setScenarioEdges(getSolutionEdgesRlative(JSON.parse(JSON.stringify(scenario)).solution.points, JSON.parse(JSON.stringify(scenario)).solution.edges));
+        // setScenarioEdges(JSON.parse(JSON.stringify(scenario)).solution.edges);
+        var bg = JSON.parse(JSON.stringify(scenario)).background;
+        setBackgroundImage(bg);
     }, [])
 
     useEffect(() => {
@@ -51,69 +54,48 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
 
     useEffect(() => {
         if (undo) {
-            // setCurrentPoint(pointsSelected.pop())
             const item = edges;
             const prevoiusPoints = pointsSelected;
             item.pop();
             setCurrentPoint(prevoiusPoints.pop())
             setEdges(item);
             setScenarioPoints(createPointList(scenario, currentPoint));
-            // console.log(edges);
-            // console.log("undone");
-            // // console.log(pointsSelected.pop())
-            // console.log(pointsSelected)
-            // console.log(currentPoint)
         }
         setUndo(false)
     }, [undo])
 
     useEffect(() => {
-        console.log("handling Resize");
-        console.log("edges", edges)
-        console.log("points Selected", pointsSelected)
-        console.log("scenarioPoints pre", scenarioPoints)
-        var tempSelected = pointsSelected;
-        var last = null;
-        if(pointsSelected.at(-1)){
-            last = JSON.parse(JSON.stringify(pointsSelected.at(-1)));
-            last.selected = true;
-            tempSelected.pop();
-            tempSelected.push(last);
-        }
-        console.log("last", last);
-        console.log("tempSElected", tempSelected);
-        var indices = pointsSelected.map((point) => {
-            return findPointIndex(point);
-        })
-        // indices.push(findPointIndex(currentPoint));
-        // indices.pop();
-        console.log("indices", indices);
+            var tempSelected = pointsSelected;
+            var last = null;
+            if (pointsSelected.at(-1)) {
+                last = JSON.parse(JSON.stringify(pointsSelected.at(-1)));
+                last.selected = true;
+                tempSelected.pop();
+                tempSelected.push(last);
+            }
+            var indices = pointsSelected.map((point) => {
+                return findPointIndex(point);
+            })
         setScenarioPoints(createPointList(scenario));
-
-        console.log(scenarioPoints);
-      },[width, height]
+        }, [width, height]
     )
 
-    function recalculateEdges (indicies){
-        let tempStart = pointsSelected.at(indicies[0])
-        if(indicies.length > 1){
-            indicies.forEach(
-
-            )
+    const openModal = (modal) => {
+        if(modal === "victory") {
+            setModal("victory-modal");
+        }else if(modal === alert){
+            setModal("alert-modal");
         }
     }
 
-    function recalculateSolutionEdges (){
-
+    const closeModal = () => {
+        setModal("");
     }
 
 
     function contains(pointsArray, point) {
         var returnValue = false
         pointsArray.map((element) => {
-            // console.log("Equals? ", JSON.stringify(element), JSON.stringify(point))
-            // console.log(JSON.stringify(element) === JSON.stringify(point))
-
             if (JSON.stringify(element) === JSON.stringify(point)) {
                 returnValue = true;
             }
@@ -121,18 +103,98 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
         return returnValue;
     }
 
-    function getScenarioPointsRelative(pointsList){
+    function getScenarioPointsRelative(pointsList) {
         var points = JSON.parse(JSON.stringify(pointsList));
+        var percentilepoints = true;
+        var widthHeightRatio;
+        if (width > height) {
+            widthHeightRatio = (width / height) * 100;
+        } else {
+            widthHeightRatio = (height / width) * 100;
+        }
         points.map((point) => {
-            point.x_coordinate = parseFloat(parseFloat(parseFloat(point.x_coordinate / 1600) * width).toFixed(2));
-            point.y_coordinate = parseFloat(parseFloat(parseFloat(point.y_coordinate / 900 )* height).toFixed(2));
-            point.selected = false;
+            if (point.x_coordinate > widthHeightRatio || point.y_coordinate > widthHeightRatio) {
+                percentilepoints = false;
+            }
         })
+        if (percentilepoints) {
+            points.map((point) => {
+                point.x_coordinate = parseFloat(parseFloat((parseFloat(point.x_coordinate) * width) / 100).toFixed(2));
+                point.y_coordinate = parseFloat(parseFloat((parseFloat(point.y_coordinate) * height) / 100).toFixed(2));
+                point.selected = false;
+            })
+        } else {
+            points.map((point) => {
+                point.x_coordinate = parseFloat(parseFloat(parseFloat(point.x_coordinate / 1600) * width).toFixed(2));
+                point.y_coordinate = parseFloat(parseFloat(parseFloat(point.y_coordinate / 900) * height).toFixed(2));
+                point.selected = false;
+            })
+        }
         return points
     }
 
-    function getSolutionEdgesRlative(){
+    function getSolutionEdgesRlative(pointsList, scenarioEdgeList) {
+        var solutionEdges = [];
+        var percentilepoints = true;
+        var widthHeightRatio;
+        console.log("edgeRelWidth", width);
+        console.log("WedgeRelHeight", height)
+        if (width > height) {
+            widthHeightRatio = (width / height) * 100;
+        } else {
+            widthHeightRatio = (height / width) * 100;
+        }
+        pointsList.map((point) => {
+            if (point.x_coordinate > widthHeightRatio || point.y_coordinate > widthHeightRatio) {
+                percentilepoints = false;
+            }
+        })
+        if (!percentilepoints) {
+            solutionEdges=(scenarioEdgeList.map((edge) => {
 
+                return {
+                    "start": {
+                        "x_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).start.x_coordinate) / 1600) * width).toFixed(2),
+                        "y_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).start.y_coordinate) / 900) * height).toFixed(2),
+                    },
+                    "end": {
+                        "x_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).end.x_coordinate) / 1600) * width).toFixed(2),
+                        "y_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).end.y_coordinate) / 900) * height).toFixed(2),
+                    }
+                };
+            }));
+        } else {
+            solutionEdges=(scenarioEdgeList.map((edge) => {
+                return {
+                    "start": {
+                        "x_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).start.x_coordinate) * width) / 100).toFixed(2),
+                        "y_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).start.y_coordinate) * height) / 100).toFixed(2),
+                    },
+                    "end": {
+                        "x_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).end.x_coordinate) * width) / 100).toFixed(2),
+                        "y_coordinate": parseFloat((parseFloat(JSON.parse(JSON.stringify(edge)).end.y_coordinate) * height) / 100).toFixed(2),
+                    }
+                };
+            }));
+        }
+        // TODO set to solutionEdges
+        setSolutionLength(recalculateLength(solutionEdges));
+        return solutionEdges;
+
+    }
+
+    function recalculateLength(edgelist) {
+        var lengthArray = [];
+        var length = 0.0
+        lengthArray = edgelist.map((edge) => {
+           return  (Math.sqrt(Math.pow(JSON.parse(JSON.stringify(edge)).end.x_coordinate - JSON.parse(JSON.stringify(edge)).start.x_coordinate, 2)
+               +  Math.pow(JSON.parse(JSON.stringify(edge)).end.y_coordinate- JSON.parse(JSON.stringify(edge)).start.y_coordinate, 2)));
+        })
+        lengthArray.forEach( (element) => {
+                length += parseFloat(element);
+            }
+        )
+        return length;
     }
 
     function createPointList(scenario, selectedPoint = null) {
@@ -144,8 +206,8 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
         // console.log(points);
         if (selectedPoint != null) {
             points[points.findIndex((element) => {
-                console.log("element",JSON.stringify( element));
-                console.log("selectedPoint",JSON.stringify( selectedPoint))
+                console.log("element", JSON.stringify(element));
+                console.log("selectedPoint", JSON.stringify(selectedPoint))
                 // element.x_coordinate === selectedPoint.x_value;
                 return JSON.stringify(element) === JSON.stringify(selectedPoint)
             })].selected = true;
@@ -219,6 +281,7 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
         setCurrentPoint(temp);
         if (contains(pointsSelected, temp) && !finishPath(temp)) {
             setAlert(true);
+            openModal("alert");
         } else {
             var setFinishAfter = false;
             if (finishPath(temp)) {
@@ -238,6 +301,7 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
             }
             if (setFinishAfter) {
                 setPathFinished(true);
+                openModal("victory");
             }
         }
     }
@@ -247,23 +311,26 @@ const PlayingField = ({scenario, width, height, solution, setSolution, undo, set
         setPathFinished(false);
     }
 
+    const additionalProps = {
+        handleSolutionModal: handleSolutionModal,
+        solutionLength: parseFloat(solutionLength).toFixed(2),
+        playerLength: parseFloat(playerLength).toFixed(2)
+    }
+
     return (
         <>
             {scenarioPoints && <div className="wrapper" style={{height: "100%", with: "100%", borderRadius: "10px"}}>
                 {solution && <DisplayCanvas width={width} height={height} edges={edges}
-                                            solutionEdges={scenarioEdges}></DisplayCanvas>}
-                {!solution && <DisplayCanvas width={width} height={height} edges={edges}></DisplayCanvas>}
-                {alert && console.log("alert")}
-                {<Modal open={pathFinished} onClose={() => setPathFinished(false)}>
-                    <><Label>Best Solution: </Label><Label>{solutionLength}</Label></>
-                    <><Label>Your Solution: </Label><label>{playerLength}</label></>
-                    <Button className={"ShowSolution"} name={"solutionModal"} value={"ShowSolution"}
-                            onClick={() => handleSolutionModal()}>Show Solution</Button>
-                </Modal>}
+                                            solutionEdges={scenarioEdges}
+                                            backgroundImage={backgroundImage}></DisplayCanvas>}
+                {!solution && <DisplayCanvas width={width} height={height} edges={edges}
+                                             backgroundImage={backgroundImage}></DisplayCanvas>}
+                <ModalManager modal={modalOpen} closeFn={closeModal} additionalProps={additionalProps}/>
                 <div className="layout">
                     <form style={{width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0)"}}>
                         {scenarioPoints.map((point) => {
-                            return <Point x_coordinate={point.x_coordinate} y_coordinate={parseFloat(point.y_coordinate)}
+                            return <Point x_coordinate={point.x_coordinate}
+                                          y_coordinate={parseFloat(point.y_coordinate)}
                                           selected={point.selected} click={(e) => handleClick(e)}/>
                         })}
                     </form>

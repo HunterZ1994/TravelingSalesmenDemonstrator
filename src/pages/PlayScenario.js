@@ -6,6 +6,7 @@ import PlayingField from "../components/PlayingField";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {logDOM} from "@testing-library/react";
 import Modal from "../components/Modal";
+import ModalManager from "../components/ModalManager";
 
 const PlayScenario = ({id}) => {
 
@@ -18,9 +19,10 @@ const PlayScenario = ({id}) => {
     const [scenarioID, setScenarioId] = useState(null);
     const [scenarioSelected, setScenarioSelected] = useState(false);
     const [resize, setResize] = useState(false);
-    const [displayWidth, setDisplayWidth] = useState();
-    const [displayHeight, setDisplayHight] = useState();
+    const [displayWidth, setDisplayWidth] = useState(window.innerWidth * 0.85);
+    const [displayHeight, setDisplayHight] = useState(window.innerHeight * 0.92);
     const [playAgain, setPlayAgain] = useState(false);
+    const [modalOpen, setModal] = useState("false");
 
     const scenarioSelect = useRef();
 
@@ -30,21 +32,31 @@ const PlayScenario = ({id}) => {
         {type: "button", href: "", func: () => setUndo(true), text: "Undo", id: 3},
         {type: "button", href: "", func: () => setShowSolution(true), text: "Show Solution", id: 4},
         {type: "link", href: "/", func: null, text: "back", id:5}
-        // {type: "textinput", text: "Testinput"}
     ]
 
     const measurePlayingArea = useCallback(
         (node) => {
+            console.log("Measuring playing area");
+            console.log("Scenario id", scenarioID);
             if(node){
                 var style = getComputedStyle(node);
+                console.log(style);
                 setDisplayWidth(node.getBoundingClientRect().width -  parseFloat(style.paddingLeft.replace("px", "")) - parseFloat(style.paddingRight.replace("px", "") ) -2);
                 setDisplayHight(node.getBoundingClientRect().height -  parseFloat(style.paddingTop.replace("px", "")) - parseFloat(style.paddingBottom.replace("px", "") ) -2);
                 setResize(false);
             }
         }
 
-       ,[resize]
+       ,[scenarioID, resize]
     );
+
+    const openModal = (e) => {
+        setModal("choose-game-modal");
+    }
+
+    const closeModal = () => {
+        setModal("");
+    }
 
     React.useEffect(() => {
         window.addEventListener('resize', handleResize)
@@ -52,7 +64,6 @@ const PlayScenario = ({id}) => {
 
     function handleResize() {
         setTimeout(() => {
-                console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
                 setResize(true);
             }, 5
         )
@@ -67,13 +78,14 @@ const PlayScenario = ({id}) => {
       useEffect(() => {
         fetch("/api/scenarioNames").then(
             res => {
-                console.log(res);
                 return res.json();
             }).then(data => {
             setScnearioNames(data)
             setIsPendingScenarioNames(false);
         });
-
+        if(!scenarioSelected || ! scenarioID){
+            openModal();
+        }
     }, []);
 
 
@@ -81,10 +93,18 @@ const PlayScenario = ({id}) => {
         if(scenarioID) {
             fetch(resourseLink).then(
                 res => {
-                    console.log(res)
                     return res.json();
                 }).then(data => {
                 setData(data);
+                console.log("Scenario Background: ", JSON.parse(JSON.stringify(data)).background)
+                console.log(typeof JSON.parse(JSON.stringify(data)).background)
+                if(JSON.parse(JSON.stringify(data)).background != null && JSON.parse(JSON.stringify(data)).background !== "" && !JSON.parse(JSON.stringify(data)).background.includes("null")){
+                    console.log("INSIDE SCENARIO BACKGROUND")
+                    var image = new Image();
+                    image.src = JSON.parse(JSON.stringify(data)).background;
+                    // setDisplayWidth(parseFloat(image.width + 5));
+                    // setDisplayHight(parseFloat(image.height + 5));
+                }
                 setIsPendingScenario(false);
             });
         }
@@ -92,6 +112,7 @@ const PlayScenario = ({id}) => {
 
     const handleScenarioChoice = (e) => {
         e.preventDefault();
+
         setScenarioId(scenarioSelect.current.value)
         setScenarioSelected(true);
     }
@@ -101,26 +122,20 @@ const PlayScenario = ({id}) => {
 
     }
 
+    const additionalProps = {
+        handleScenarioChoice: handleScenarioChoice,
+        scenarioNames: scenarioNames,
+        scenarioSelect: scenarioSelect
+    }
+
+
+
     return (
         <div className="Play Scenario">
             <Header title={'Play Game'}/>
             <Sidebar items={sideBarElements}/>
             <>  {!scenarioID &&
-                <DisplayArea element={<Modal open={!scenarioSelected} onClose={() => setScenarioSelected(true)}>
-                    {isPendingSenarioNames && <div>Loading...</div>}
-                    {!isPendingSenarioNames &&
-                        <form onSubmit={(e) => handleScenarioChoice(e)}>
-                            <label>Choose a Scenario</label>
-                            <select name={"scenario"} id={"scenarioSelector"} ref={scenarioSelect}>
-                                {scenarioNames.map((scenarioName) => {
-                                        return <option value={scenarioName}>{scenarioName}</option>
-                                    }
-                                )}
-                            </select>
-                            <input type={"submit"} value={"pick!"}/>
-                        </form>
-                    }
-                </Modal>}/>
+                <ModalManager modal={modalOpen} closeFn={closeModal} additionalProps={additionalProps}/>
             }
             </>
             <>

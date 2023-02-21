@@ -7,6 +7,7 @@ import Canvas from "../components/Canvas";
 import Point from "../components/Points";
 import Modal from "../components/Modal";
 import ModalManager from "../components/ModalManager";
+import {type} from "@testing-library/user-event/dist/type";
 
 const NewScenario = () => {
 
@@ -62,30 +63,7 @@ const NewScenario = () => {
         // manageCanvasSize()
     }
 
-    // function manageCanvasSize(){
-    //     const measurePlayingArea = useCallback(
-    //         (node) => {
-    //             if(node) {
-    //                 console.log("callback", node.getBoundingClientRect());
-    //                 setCanvasHeight(node.getBoundingClientRect().height-15);
-    //                 setCanvasWidth(node.getBoundingClientRect().width-15);
-    //             }
-    //         },
-    //         [],
-    //     );
-    // }
-
-
-    // const handleAdd = (X_CoordinateRef, Y_CoordinateRef) => {
-    //     // console.log(Document.getElementById("X-Coordinate"))
-    //     // console.log(Document.getElementById("Y-Coordinate"))
-    //     // console.log(document.getElementById())
-    //     console.log("TEST")
-    //     console.log(X_CoordinateRef.value)
-    //     console.log(Y_CoordinateRef.value)
-    //     temp = new Point(X_CoordinateRef.value, Y_CoordinateRef.value)
-    //
-    // }
+    const backgroundpreview = useRef(null);
 
     const [isOpen, setIsOpen] = useState(false);
     const [coordinates, setCoordinates] = useState([]);
@@ -95,6 +73,8 @@ const NewScenario = () => {
     const [image, setSetImage] = useState();
     const [file, setFile] = useState();
     const [preview, setPreviw] = useState();
+    const [backgroundNames, setBackgroundNames] = useState([]);
+    const [selectedBackgroundFileName, setSelectedBackgroundFileName] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -104,7 +84,7 @@ const NewScenario = () => {
             "solution": {
                 "points": coordinates
             },
-            "background": preview
+            "background": background
         }
         console.log(body);
         const requestOptions = {
@@ -119,18 +99,37 @@ const NewScenario = () => {
             .then(data => console.log(data));
     }
 
+    useEffect(() => {
+        fetch("/api/getAllBackgroundNames").then(response => response.json()).then(
+            names => {
+                setBackgroundNames(names);
+            }
+        )
+    }, []);
+
+    useEffect(() => {
+        if (selectedBackgroundFileName) {
+            const requestOptions = {
+                method: 'GET',
+            };
+            console.log("selectedBackgroundFileName: ", selectedBackgroundFileName)
+            fetch("/api/getBackground?" + new URLSearchParams({
+                "backgroundname": selectedBackgroundFileName
+            }), requestOptions)
+                .then(response => response.blob())
+                .then(imageBlob => {
+                    var filereader = new FileReader();
+                    filereader.onload = () => {
+                        backgroundpreview.current.src = filereader.result;
+                        console.log(typeof filereader.result)
+                    }
+                    filereader.readAsDataURL(imageBlob)
+                })
+        }
+    }, [selectedBackgroundFileName])
+
+
     const sideBarElements = [
-        // {type: "textInput", href: "/", func: null, text: "Name Scenario", id: 1},
-        // {type: "coordianteInput", href: "/", func: null, text: "X / Y", id: 2},
-        // {type: 'button', href: "/", func: null, text: "Undo", id: 3},
-        // {
-        //     type: 'link', href: "#", func: null, text: 'Manage Backgrounds', id: 4, subitems: [
-        //         {type: 'link', href: "#", func: null, text: 'Select Background', id: 5},
-        //         {type: 'link', href: "#", func: null, text: 'Clear Background', id: 6},
-        //     ]
-        // },
-        // {type: 'submit', href: "/", func: {handleSubmit}, text: "Apply", id: 7},
-        // {type: 'link', href: "/", func: null, text: "Back / Cancel", id: 8},
         {
             type: "Form",
             href: "",
@@ -141,16 +140,12 @@ const NewScenario = () => {
             setBackground: setBackground,
             text: ""
         },
-        // {type: "modalButton", href: "", func: () => setIsOpen(true), text: "openModal"},
-        {type: "link", href: "", func: (e) => openModal(e), text: "upload background", id: "upload-background-modal"},
+        {type: "link", href: "", func: (e) => openModal(e), text: "Select Background", id: "select-background-modal"},
         {type: "link", href: "/", func: null, text: "Home"}
-        // {type: "modalButton", href: "", func: null, text: "Open Modal"}
-        // {type: "button", href: "", func:"onClick={() => setIsOpen(true)}", text: "open Modal"}
     ]
 
     const handleFile = (e) => {
         e.preventDefault();
-        console.log("File to upload", file);
         setIsOpen(false);
         setBackground(file)
         var filereader = new FileReader();
@@ -165,6 +160,8 @@ const NewScenario = () => {
         filereader.readAsDataURL(file)
     }
 
+
+
     function previewImage(input) {
         setFile(input);
         var reader = new FileReader();
@@ -174,51 +171,34 @@ const NewScenario = () => {
         reader.readAsDataURL(input);
     }
 
+    const handleSelectChange = (e) => {
+        e.preventDefault();
+        console.log(e.target.value);
+        setSelectedBackgroundFileName(e.target.value);
+    }
+
+    const handleSelectBackground = (e) => {
+        e.preventDefault();
+        // console.log("New Modal bg preview", backgroundpreview.current.src);
+        setBackground(backgroundpreview.current.src)
+    }
+
     const additionalProps = {
         preview: preview,
         previewImage: previewImage,
         handleFile: handleFile,
+        backgroundNames: backgroundNames,
+        selectedBackgroundFileName: selectedBackgroundFileName,
+        backgroundpreview: backgroundpreview,
+        handleSelectChange: handleSelectChange,
+        selectBackground: handleSelectBackground,
     }
 
 
     return (
-        // <div className="new Scenario">
-        //     <Header title={'Create New Scenario'}/>
-        //     <Sidebar items={sideBarElements}/>
-        //     {/*<Button */}
-        //     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-        //         Fancy Modal
-        //         <form onSubmit={(e) => handleFile(e)}>
-        //             <input type={"file"} onInput={(e) => {
-        //                 console.log("fileInput")
-        //                 console.log(e.target.files[0])
-        //                 setFile(e.target.files[0]);
-        //             }}/>
-        //             {file && <input type={"submit"} value={"choose file"} disabled={false}/>}
-        //             {!file && <input type={"submit"} value={"choose file"} disabled={true}/>}
-        //         </form>
-        //     </Modal>
-        //     <DisplayArea element={<Canvas pointToAdd={temp} coordinates={coordinates} setCoordinates={setCoordinates}/> }/>
-        // </div>
-
-
         <div className="new Scenario">
             <Header title={'Create New Scenario'}/>
             <Sidebar items={sideBarElements}/>
-            {/*<Modal open={isOpen} onClose={() => setIsOpen(false)}>*/}
-            {/*    Fancy Modal*/}
-            {/*    /!*{preview && console.log(preview)}*!/*/}
-            {/*    {preview && <div className={"imagePreview"}><img src={preview} alt={"Error"}/> </div>}*/}
-            {/*    <form onSubmit={(e) => handleFile(e)}>*/}
-            {/*    <input type={"file"} accept={"image/*"} onInput={(e) => {*/}
-            {/*        previewImage(e.target.files[0]);*/}
-            {/*    }}/>*/}
-            {/*        {preview && <input type={"submit"} value={"choose file"} disabled={false}/>}*/}
-            {/*        {!preview && <input type={"submit"} value={"choose file"} disabled={true}/>}*/}
-            {/*    </form>*/}
-            {/*</Modal>*/}
-            {/*<DisplayArea innerRef={measurePlayingArea} element={<Canvas pointToAdd={temp} coordinates={coordinates} setCoordinates={setCoordinates} /> }/>*/}
-            {/*<DisplayArea innerRef={measurePlayingArea}/>*/}
             {!background && <DisplayArea innerRef={measurePlayingArea}
                                          element={<Canvas pointToAdd={temp} width={canvasWidth} height={canvasHeight}
                                                           coordinates={coordinates}

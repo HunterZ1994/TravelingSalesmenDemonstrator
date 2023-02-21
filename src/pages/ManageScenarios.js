@@ -19,13 +19,23 @@ const ManageScenarios = () => {
     const sideBarElements = [
         {type: 'link', href: "/newScenario", func: null, text: "New Scenario", id: 1},
         {
-            type: 'link',
-            href: "#",
-            func: (e) => openModal(e),
-            text: "Edit Scenario",
-            id: "edit-scenario-modal"
+            type: 'link', href: "#", func: null, text: "Manage Scenarios", id: 2, subitems: [
+                {
+                    type: 'link',
+                    href: "#",
+                    func: (e) => openModal(e),
+                    text: "Edit Scenario",
+                    id: "edit-scenario-modal"
+                },
+                {
+                    type: 'link',
+                    href: "#",
+                    func: (e) => openModal(e),
+                    text: 'Remove Scenario',
+                    id: "remove-scenario-modal"
+                },
+            ]
         },
-        {type: 'link', href: "#", func: (e) => openModal(e), text: 'Remove Scenario', id: "remove-scenario-modal"},
         {
             type: 'link', href: "#", func: null, text: 'Manage Backgrounds', id: 4, subitems: [
                 {
@@ -46,7 +56,6 @@ const ManageScenarios = () => {
         },
         {type: 'link', href: "/", func: null, text: 'Back', id: 7}
     ]
-
 
 
     const [backgroundNames, setBackgroundNames] = useState([]);
@@ -95,7 +104,7 @@ const ManageScenarios = () => {
 
     useEffect(
         () => {
-            if(scenarioToRemove){
+            if (scenarioToRemove) {
                 const requestOptions = {
                     method: 'DELETE',
                 };

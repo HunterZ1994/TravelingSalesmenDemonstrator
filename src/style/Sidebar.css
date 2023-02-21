@@ -15,8 +15,14 @@
     /*transition: 0.3s;*/
 }
 
+@media (max-width: 599px)  {
+    .sideBar{
+        display: none;
+    }
+}
+
 .sideBar a {
-    margin: 3vh 3vw 3vh 9vh;
+    margin: 5% 5% 5% 5%;
     padding: 3vh 3vw 3vh 9vh;
     text-decoration: none;
     color: var(--textColor);
@@ -43,6 +49,7 @@
     padding: 3vh 3vw 3vh 9vh;
     text-decoration: none;
     font-size: 16px;
+    background-color: var(--sideMenuBG);
     color: var(--textColor);
     display: block;
     border: none;
@@ -55,13 +62,13 @@
 }
 
 .sideBar a:hover, .dropdownBtn:hover {
-    color: var(--navBarBG)
+    color: var(--sideMenuTexe-dark);
 }
 
 /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
 .dropdown-container {
     /* display: none; */
-    background-color: var(--pageBGColor);
+    background-color: var(--sideMenuBG-dark);
     padding-left: 8px;
 }
 

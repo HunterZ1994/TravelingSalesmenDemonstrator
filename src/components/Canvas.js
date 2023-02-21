@@ -24,16 +24,12 @@ const Canvas = ({pointToAdd, coordinates, setCoordinates, background, width, hei
     const context = useRef();
     const canvasRef = useRef();
 
-    useEffect(() => {
-        console.log("internalWidth: ", width);
-        console.log("internalHeight: ",height);
-    });
-
 
 
 
     function previewImage(input) {
-        // console.log(input)
+        console.log("indput data", input)
+        console.log("Input type", typeof input)
         var reader = new FileReader();
         reader.onload = function (e) {
             const image = new Image();
@@ -80,12 +76,11 @@ const Canvas = ({pointToAdd, coordinates, setCoordinates, background, width, hei
 
         context.current = canvasElement.getContext('2d');
         coordinates && render()
-        background && previewImage(background);
-        // fetch('http://localhost:8000/points').then(res => {
-        //     return res.json();
-        // }).then(data => {
-        //     setRenderData(data);
-        // })
+        if (background) {
+            var image = new Image();
+            image.src = background;
+            context.current.drawImage(image, 0,0, image.width, image.height);
+        }
         setRerender(false);
     }, [])
 

@@ -1,33 +1,29 @@
-import React, {useEffect} from "react";
 import Modal from "./Modal";
+import React from "react";
 
-const ChooseBackgroundModal = ({closeFn = () => null, open = false, additionalProps = {}}) => {
-    return (
+const SelectBackgroundModal = ({closeFn = () => null, open = false, additionalProps = {}}) => {
+    return(
         <Modal open={open}>
             <div className="modal--mask">
                 <div className="modal-window">
                     <header className="modal--header">
-                        <h1>Manage Background Modal</h1>
+                        <h1>Select Scenario Background</h1>
                     </header>
                     <div className="modal--body">
-                        <p>Rename or Delete your backgrounds</p>
+                        <p>Choose Your background for this scenario</p>
                         <img style={{
                             width: "15vw",
                             height: "15vh",
                             objectFit: "cover",
                             objectPosition: "25% 25%"
                         }} ref={additionalProps.backgroundpreview} alt={"backgroundpreview"}/>
-                        <> <input type={"button"} id={"rename"} value={"rename"} className={"modal-button"}
-                                  onClick={(e) => additionalProps.handleBGRename(e)}/>
-                            <input type={"text"} id={"newName"} ref={additionalProps.newNameFiled} className={"modal-input"}/>
-                            <input type={"button"} id={"deleteBackground"} value={"delete"} className={"modal-button"}
-                                   onClick={(e) => additionalProps.handDeleteBackground(e)}/></>
                         <><select id={"backgroundName"} ref={additionalProps.backgroundSelector} className={"modal-select"}
                                   onInput={(e) => additionalProps.handleSelectChange(e)}>
                             {additionalProps.backgroundNames && additionalProps.backgroundNames.map(bg => {
                                 return <option value={bg}>{bg}</option>
                             })}
                         </select>
+                            <input type={"button"} className={"modal-button"} value={"select"} onClick={(e) => additionalProps.selectBackground(e)}/>
                         </>
                     </div>
                     <footer className="modal--footer">
@@ -38,7 +34,7 @@ const ChooseBackgroundModal = ({closeFn = () => null, open = false, additionalPr
                 </div>
             </div>
         </Modal>
-    )
+    );
 }
 
-export default ChooseBackgroundModal;
+export default SelectBackgroundModal;
