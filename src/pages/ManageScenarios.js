@@ -200,33 +200,6 @@ const ManageScenarios = () => {
             <input type='file' id='file' name={"backgroundFile"} ref={inputFile} style={{display: 'none'}}
                    onInput={(e) => selectBackgroundFile(e)} accept={".png, .jpg, .jpeg, .gif"}/>
             <Sidebar items={sideBarElements}/>
-            {/*<input type={"button"} id={"openModal"} value={"openBackgroundModalButton"}*/}
-            {/*       data-modal={"upload-background-modal"} onClick={(event) => openModal(event)}/>*/}
-            {/*<>*/}
-            {/*    {openBackgroundModal && <Modal open={openBackgroundModal} onClose={() => setOpenBackgroundModal(false)}>*/}
-            {/*        <img style={{*/}
-            {/*            width: "15vw",*/}
-            {/*            height: "15vh",*/}
-            {/*            objectFit: "cover",*/}
-            {/*            objectPosition: "25% 25%"*/}
-            {/*        }} ref={backgroundpreview} alt={"backgroundpreview"}/>*/}
-            {/*        <> <input type={"button"} id={"rename"} value={"rename"} onClick={(e) => handleBGRename(e)}/>*/}
-            {/*            <input type={"text"} id={"newName"} ref={newNameFiled}/>*/}
-            {/*            <input type={"button"} id={"deleteBackground"} value={"delete"}*/}
-            {/*                   onClick={(e) => handDeleteBackground(e)}/></>*/}
-            {/*        <>{openBackgroundModal && <select id={"backgroundName"} ref={backgroundSelector}*/}
-            {/*                                          onInput={(e) => handleSelectChange(e)}>*/}
-            {/*            {backgroundNames.map(bg => {*/}
-            {/*                return <option value={bg}>{bg}</option>*/}
-            {/*            })}*/}
-            {/*        </select>}</>*/}
-            {/*    </Modal>}*/}
-            {/*    {console.log("openBGModal ", openBackgroundModal)}*/}
-            {/*    {console.log("openmanagemodal ", openManageModal)}*/}
-            {/*    {openManageModal && <Modal open={openManageModal} onClose={setOpenManageModal(false)}>*/}
-            {/*        <div>Test</div>*/}
-            {/*    </Modal>}*/}
-            {/*</>*/}
             <DisplayArea/>
             <>
                 <ModalManager closeFn={closeModal} modal={modalOpen} additionalProps={additionalProps}/>
