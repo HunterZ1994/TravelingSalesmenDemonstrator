@@ -103,14 +103,12 @@ public class ScenarioController {
      * @return the updated Scenario with the new name;
      */
     //TODO
-    public Scenario renameScenario(String id, String newName) throws IOException {
+    public boolean renameScenario(String id, String newName) {
         File oldFile = toScenarios.resolve(Objects.requireNonNull(id)).toFile();
         if (newName.contains(".tsp")) {
-            oldFile.renameTo(toScenarios.resolve(Objects.requireNonNull(newName)).toFile());
-            return reader.readFromFile(toScenarios.resolve(Objects.requireNonNull(newName)).toFile());
+           return oldFile.renameTo(toScenarios.resolve(Objects.requireNonNull(newName)).toFile());
         } else {
-            oldFile.renameTo(toScenarios.resolve(newName + ".tsp").toFile());
-            return reader.readFromFile(toScenarios.resolve(newName + ".tsp").toFile());
+           return oldFile.renameTo(toScenarios.resolve(newName + ".tsp").toFile());
         }
     }
 

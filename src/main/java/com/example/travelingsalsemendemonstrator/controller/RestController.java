@@ -71,6 +71,15 @@ public class RestController {
 
     }
 
+    @PostMapping("/renameScenario")
+    public ResponseEntity<?> updateScenario(@RequestPart("ScenarioName") String filename, @RequestPart("newName") String newFilename){
+        if(sc.renameScenario(filename, newFilename)){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     /**
      * Endpoint to delete a preselected Scenario
