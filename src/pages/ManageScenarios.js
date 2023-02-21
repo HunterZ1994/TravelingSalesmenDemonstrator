@@ -5,6 +5,7 @@ import DisplayArea from "../components/DisplayArea";
 import Modal from "../components/Modal";
 import DisplayCanvas from "../components/DisplayCanvas";
 import ModalManager from "../components/ModalManager";
+import {logDOM} from "@testing-library/react";
 
 const ManageScenarios = () => {
 
@@ -72,7 +73,6 @@ const ManageScenarios = () => {
             const requestOptions = {
                 method: 'GET',
             };
-            console.log("selectedBackgroundFileName: ", selectedBackgroundFileName)
             fetch("/api/getBackground?" + new URLSearchParams({
                 "backgroundname": selectedBackgroundFileName
             }), requestOptions)
@@ -81,7 +81,6 @@ const ManageScenarios = () => {
                     var filereader = new FileReader();
                     filereader.onload = () => {
                         backgroundpreview.current.src = filereader.result;
-                        console.log(typeof filereader.result)
                     }
                     filereader.readAsDataURL(imageBlob)
                 })
@@ -96,9 +95,7 @@ const ManageScenarios = () => {
         )
         fetch("/api/scenarioNames").then(response => response.json()).then(
             names => {
-                console.log(names)
                 setScenarioNames(names);
-                console.log(scenarioNames)
             }
         )
     }, [scenarioToRemove]);
@@ -156,27 +153,51 @@ const ManageScenarios = () => {
 
     const handleSelectChange = (e) => {
         e.preventDefault();
-        console.log(e.target.value);
         setSelectedBackgroundFileName(e.target.value);
     }
 
     const handleBGRename = (e) => {
-        console.log(newNameFiled.current);
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("backgroundName", backgroundSelector.current.value);
+        formData.append("newName", newNameFiled.current.value)
+        const requestOptions = {
+            method: 'POST',
+            body: formData
+        };
+        fetch("api/renameBackground", requestOptions)
+            .then(response => response.status)
+            .then(data => console.log(data));
     }
 
     const handDeleteBackground = (e) => {
-        console.log(e.target);
+        e.preventDefault()
+        const formData = new FormData();
+        formData.append("backgroundName", backgroundSelector.current.value);
+        const requestOptions = {
+            method: 'DELETE',
+            body: formData
+        };
+        fetch("api/deleteBackground", requestOptions)
+            .then(res => res.status).then(data => console.log(data));
     }
 
     const handleScenarioRemove = (e) => {
-        console.log(e)
         setScenarioToRemove(scenarioSelector.current.value);
     }
 
     const handleScenarioRename = (e) => {
         e.preventDefault();
-        console.log(e)
-        console.log(newScenarioNameFiled.current.value);
+        const formData = new FormData();
+        formData.append("ScenarioName", scenarioSelector.current.value);
+        formData.append("newName", newScenarioNameFiled.current.value)
+        const requestOptions = {
+            method: 'POST',
+            body: formData
+        };
+        fetch("api/renameScenario", requestOptions)
+            .then(response => response.status)
+            .then(data => console.log(data));
     }
 
 
@@ -184,6 +205,8 @@ const ManageScenarios = () => {
         backgroundpreview: backgroundpreview,
         newNameFiled: newNameFiled,
         backgroundSelector: backgroundSelector,
+        handDeleteBackground: handDeleteBackground,
+        handleBGRename: handleBGRename,
         handleSelectChange: handleSelectChange,
         backgroundNames: backgroundNames,
         handleScenarioRemove: handleScenarioRemove,
@@ -196,7 +219,7 @@ const ManageScenarios = () => {
 
     return (
         <div className="home">
-            <Header title={'The Traveling Salesmen'}/>
+            <Header title={'Manage Scenarios'}/>
             <input type='file' id='file' name={"backgroundFile"} ref={inputFile} style={{display: 'none'}}
                    onInput={(e) => selectBackgroundFile(e)} accept={".png, .jpg, .jpeg, .gif"}/>
             <Sidebar items={sideBarElements}/>
