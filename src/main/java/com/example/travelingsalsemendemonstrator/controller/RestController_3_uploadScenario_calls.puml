@@ -1,0 +1,169 @@
+@startuml
+
+/' diagram meta data start
+config=CallConfiguration;
+{
+  "rootMethod": "com.example.travelingsalsemendemonstrator.controller.RestController#uploadScenario(Scenario)",
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showMethodParametersTypes": false,
+    "showMethodParametersNames": false,
+    "showMethodReturnType": false,
+    "showPackageLevels": 2,
+    "showCallOrder": false,
+    "edgeMode": "MethodsOnly", // TypesOnly, MethodsOnly, TypesAndMethods, MethodsAndDirectTypeUsage
+    "showDetailedClassStructure": false
+  },
+  "rootClass": "com.example.travelingsalsemendemonstrator.controller.RestController",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="LR"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_1322970774 { 
+   	label=example
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1453431066 { 
+   	label=travelingsalsemendemonstrator
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   subgraph cluster_1847168963 { 
+   	label=ScenarioWriter
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   ScenarioWriter133759692XXXwriteToFile2189724[
+	label="+ writeToFile()"
+	style=filled
+	fillcolor=white
+	tooltip="ScenarioWriter
+
+null"
+	fontcolor=darkgreen
+];
+
+ScenarioWriter133759692XXXwriteToFile295944256[
+	label="+ writeToFile()"
+	style=filled
+	fillcolor=white
+	tooltip="ScenarioWriter
+
+null"
+	fontcolor=darkgreen
+];
+} 
+
+subgraph cluster_466958899 { 
+   	label=RestController
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   RestController595464079XXXuploadScenario710944848[
+	label="+ uploadScenario()"
+	style=filled
+	fillcolor=white
+	tooltip="RestController
+
+&#10;  End point for uploading a new Scenario from the Client.&#10;  @param data Takes a JSON Formatted String and casts it to a scenario automatically.&#10;  @return a ResponseEntity of ether the algorithmically solved Graph of the created Scenario.&#10; "
+	penwidth=4
+	fontcolor=darkgreen
+];
+} 
+
+subgraph cluster_794036994 { 
+   	label=Nearest_Neighbour
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   Nearest_Neighbour133759692XXXsolve0[
+	label="+ solve()"
+	style=filled
+	fillcolor=white
+	tooltip="Nearest_Neighbour
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+} 
+
+'edges    
+RestController595464079XXXuploadScenario710944848 -> Nearest_Neighbour133759692XXXsolve0;
+RestController595464079XXXuploadScenario710944848 -> ScenarioWriter133759692XXXwriteToFile2189724;
+ScenarioWriter133759692XXXwriteToFile2189724 -> ScenarioWriter133759692XXXwriteToFile295944256;
+    
+}
+@enduml
