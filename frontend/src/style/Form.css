@@ -1,0 +1,14 @@
+form{
+    background: var(--sideMenuBG);
+    color:var(--textColor);
+
+}
+
+form label{
+    color: var(--textColor);
+}
+
+form input{
+    background: var(--sideMenuBG);
+    color: var(--textColor);
+}

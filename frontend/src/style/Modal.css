@@ -1,0 +1,32 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 10000
+}
+
+.modalBody {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--sideMenuBG);
+    color: var(--sideMenuText);
+    padding-left: 5vw;
+    padding-right: 5vw;
+    padding-bottom: 5vh;
+    padding-top: 5vh;
+    z-index: 10000
+}
+
+.modalBody .closeModal {
+    position: absolute;
+    background-color: var(--sideMenuBG);
+    color: var(--textColor);
+    top: 0;
+    right: 0;
+}
+
