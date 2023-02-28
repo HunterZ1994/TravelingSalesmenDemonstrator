@@ -102,7 +102,6 @@ public class ScenarioController {
      * @param newName the new name given to said scenario
      * @return the updated Scenario with the new name;
      */
-    //TODO
     public boolean renameScenario(String id, String newName) {
         File oldFile = toScenarios.resolve(Objects.requireNonNull(id)).toFile();
         if (newName.contains(".tsp")) {
