@@ -65,8 +65,30 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 ### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+**The preperatory steps specific to each system will be listed in the specific system deployment manuals**
 
-### `npm run build` fails to minify
+#### Perparation
+In order to deploy the Traveling Salsemen Demonstrator, you first need to decide on which IP Adress the backend server needs to run.
+After you have made that desicion, open the following File: `TravelingSalsemenDemonstrator/src/main/resources/application.properties`
+In here you need to change the propertie `server.address` to your desired hosting adress. This is set to `localhost` by default.
+Simmilarly you can decide on an open port to access your Spring Boot Server. 
+This is done by editing the property `server.port` wich is set to `8080` by default.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Simmilarly you need to set the same adress as the frontend proxy. This will tell the frontend, where to find the Rest endpoints.
+
+Herefor navigate to `TravelingSalsemenDemonstrator/frontend/package.json`.
+In here, below the scripts-property, you will find the proxy property. 
+This needs to be set to `http.//The_IP_adress_you_have_chosen_for_the_server:The_Port_for_the_server` it is set to `http://localhost:8080` by default. 
+
+#### Windows
+On a windows System, open your `Comand Line (CMD)` and navigate to your application root directory `TravelingSalsemenDemonstrator`
+
+In here you need to execute the following command `.\mvnw spring-boot:run -Pprod`
+This will run the server in the production environment. 
+
+#### Linux 
+On a linux distribution you need to take an additional preperatory step. For local hosting, i.e. running the backend server on `localhost` you need to delete the property `proxy` in the 
+`TravelingSalsemenDemonstrator/frontend/package.json` file.
+Afterwards, first run the batch-script `backend_server_start.sh` and afterwards, in a second terminal window run `frontend_start.sh`.
+
+After running `frontend_start.sh` the frontend will automatically open a brwoser. In case this dosn't work, open your browser and enter `localhost:3000` into your browser bar.
