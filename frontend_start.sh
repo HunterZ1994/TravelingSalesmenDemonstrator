@@ -1,4 +1,4 @@
 #! /bin/sh
 
-cd /frontend
+cd ./frontend
 npm start
